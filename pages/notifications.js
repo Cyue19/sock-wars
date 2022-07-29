@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import Notification from "./components/Notification";
 import Pagination from "./components/Pagination";
-import ModalPagination from "./components/ModalPagination";
+import NavBar from "./components/NavBar";
 import Spinner from "./components/Spinner";
 
 const endPoint = process.env.NEXT_PUBLIC_REACT_APP_URL + "/users/accountInfo";
@@ -49,33 +49,36 @@ export default function Notifications() {
     }
 
     return (
-        <div className="container p-5">
+        <div>
             {!notifs ? 
             <Spinner/>
             :
-            <div className="mx-5 p-3 pb-5" style={{borderRadius: "10px"}}>
-                <h2 style={{color: "white"}}>Notifications</h2>
+            <div>
+              <NavBar page="notifications" />
+              <div className="mx-5 pb-5" style={{paddingLeft: "8%", paddingRight: "8%"}}>
+                  <h2 style={{color: "white"}}>Notifications</h2>
 
-                <div className="mb-2">
-                    <ul className="list-group list-group-flush">
-                        {notifs.map((notif) => (
-                            <Notification key={notif._id} type={notif.type} header={notif.header} message={notif.message} time={notif.timeStamp} gameId={notif.gameId} id={notif._id} />
-                        ))}
+                  <div className="mb-2">
+                      <ul className="list-group list-group-flush">
+                          {notifs.map((notif) => (
+                              <Notification key={notif._id} type={notif.type} header={notif.header} message={notif.message} time={notif.timeStamp} gameId={notif.gameId} id={notif._id} />
+                          ))}
 
-                        {notifs.length===0 ?
-                          <div style={{color: "white", margin: "auto"}}>No notifications</div>
-                          :
-                          <div></div>
-                        }
-                        
-                        {/* <Notification type="immunity" header="Immunity" message="New immunity, [immunity], is in effect" />
-                        <hr className="m-0" style={{color: "lightgrey"}}></hr>
-                        <Notification type="target" header="Target" message="Your new target is ready" />
-                        <hr className="m-0" style={{color: "lightgrey"}}></hr> */}
-                    </ul>
-                </div>
-                {/* <Pagination numNotifs={numNotifs} perPage={10} page={page} /> */}
-                <Pagination numItems={numNotifs} perPage={10} page={page} type="page" />
+                          {notifs.length===0 ?
+                            <div style={{color: "white", margin: "auto"}}>No notifications</div>
+                            :
+                            <div></div>
+                          }
+                          
+                          {/* <Notification type="immunity" header="Immunity" message="New immunity, [immunity], is in effect" />
+                          <hr className="m-0" style={{color: "lightgrey"}}></hr>
+                          <Notification type="target" header="Target" message="Your new target is ready" />
+                          <hr className="m-0" style={{color: "lightgrey"}}></hr> */}
+                      </ul>
+                  </div>
+                  {/* <Pagination numNotifs={numNotifs} perPage={10} page={page} /> */}
+                  <Pagination numItems={numNotifs} perPage={10} page={page} type="page" />
+              </div>
             </div>
             }
     </div>

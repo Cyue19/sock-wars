@@ -2,7 +2,10 @@ import styles from "../styles/confirmelim.module.css";
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { GameContext } from "./hooks/GameContext";
+import { UserContext } from "./hooks/UserContext";
 import { useRouter } from "next/router";
+
+import NavBar from "./components/NavBar";
 
 const endPoint = process.env.NEXT_PUBLIC_REACT_APP_URL + "/games/";
 
@@ -44,6 +47,7 @@ export default function Gamehistory() {
     <div>
       {game ? (
         <div>
+          <NavBar page="index" />
           <title>Leaderboard </title>
           <div className={styles.n}>
             <p>SOCK WARS</p>

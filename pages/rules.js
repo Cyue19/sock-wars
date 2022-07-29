@@ -1,8 +1,12 @@
 import styles from '../styles/App.module.css'
 
+import NavBar from "./components/NavBar";
+
 export default function Home() {
+
     return (
         <div>
+            <NavBar page="rules"/>
             <h1 className={styles.h1}>SOCK WARS</h1>
 
             <h2 className={styles.h2}>RULES</h2>

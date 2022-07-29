@@ -6,6 +6,7 @@ import axios from "axios";
 import Spinner from "../../components/Spinner";
 import styles from "../../../styles/profile.module.css";
 import EditModal from "../../components/EditModal.js";
+import NavBar from "../../components/NavBar";
 
 const URL_PREFIX = process.env.NEXT_PUBLIC_REACT_APP_URL;
 const endPoint = process.env.NEXT_PUBLIC_REACT_APP_URL + "/games/";
@@ -288,8 +289,9 @@ export default function Gamehistory() {
 
   return (
     <div>
+      <NavBar page="game" />
       {game && lockDate && user  ? (
-        <div className="container px-5" style={{ paddingTop: "50px", width: "50%" }}>
+        <div className="container px-5 pt-3" style={{width: "50%" }}>
 
           {error ? 
             <div class="alert alert-danger" role="alert">

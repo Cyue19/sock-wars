@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from "axios";
+import NavBar from "../components/NavBar";
 
 const URL_PREFIX = process.env.NEXT_PUBLIC_REACT_APP_URL;
 const notifEndPoint = process.env.NEXT_PUBLIC_REACT_APP_URL + "/notifications/sendAll";
@@ -7,13 +8,11 @@ const notifEndPoint = process.env.NEXT_PUBLIC_REACT_APP_URL + "/notifications/se
 function Create() {
   const [startDate, setStartDate] = useState('');
   const [title, setTitle] = useState("");
-  const [user, setUser] = useState({});
   const [immunities, setImmunities] = useState([""]);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-      setUser(JSON.parse(localStorage.user))
   }, []);
 
   const submitGame = () => {
@@ -82,7 +81,8 @@ function Create() {
   }
 
   return (
-      <div className="col-4" style={{margin:"auto"}}>
+      <div>
+        <NavBar page="create"/>
         {success ?
             <div className="alert alert-success mt-3 mb-2 mx-5" style={{margin: "auto"}} role="alert">
                 Game was successfully created!
@@ -98,59 +98,51 @@ function Create() {
         :
             <div></div>
         } 
+        <div style={{width: "50%", margin: "auto"}}>
+            <h1 style={{textAlign: "center", paddingLeft:"20px", paddingRight: "20px", color:"rgb(239, 229, 189)"}}>Create a new game:</h1>
 
-        <h1 style={{textAlign: "center", paddingLeft:"20px", paddingRight: "20px", color:"rgb(239, 229, 189)"}}>Create a new game:</h1>
-        <p></p>
+            <div className="col-5" style={{ color:"rgb(239, 229, 189)", margin: "auto"}}>
+                <label>Game Title: </label>
+                <input className="form-control" value={title}
+                    type='text'
+                    onChange={e => {
+                        setTitle(e.target.value)
+                    }}
+                />
+            </div>
 
-        <div className="col-6" style={{ color:"rgb(239, 229, 189)", margin: "auto"}}>
-            <label>Game Title: </label>
-            <input className="form-control" value={title}
-                type='text'
-                onChange={e => {
-                    setTitle(e.target.value)
-                }}
-            />
-        </div>
+            <div className="col-5" style={{ color:"rgb(239, 229, 189)", margin: "auto"}}>
+                <label>Start Date: </label>
+                <input
+                    className="form-control"
+                    value = {startDate}
+                    type='datetime-local'
+                    onChange={e => {
+                        console.log(typeof(e.target.value))
+                        console.log(e.target.value)
+                        setStartDate(e.target.value)
+                    }}
+                />
+            </div>
+            <p></p>
+            <h5 style={{textAlign: "center", paddingLeft:"20px", paddingRight: "20px", color:"rgb(239, 229, 189)"}}>You may add immunities below:</h5>
+            {immunities.map((field, i) => (
+            <div key={i} className="col-5" style={{ color:"rgb(239, 229, 189)", margin: "auto"}}>
+                <label>Immunity {i+1}:</label>
+                <input className="form-control" type="text" placeholder="Enter immunity" name="firstName" value={field} onChange={e => handleChangeInput(i, e)} style={{marginLeft:"3px"}}/>
+                <button onClick={() => handleAdd(i)} className="btn btn-outline-success btn-sm" style={{marginLeft:"5px"}}>
+                    Add
+                </button>
+                <button disabled={immunities.length===1} onClick={() => handleSubtract(i)} className="btn btn-outline-danger btn-sm" style={{marginLeft:"5px"}}>
+                    Del
+                </button>
+            </div>
+            ))}
 
-        <div className="col-6" style={{ color:"rgb(239, 229, 189)", margin: "auto"}}>
-            <label>Start Date: </label>
-            <input
-                className="form-control"
-                value = {startDate}
-                type='datetime-local'
-                onChange={e => {
-                    console.log(typeof(e.target.value))
-                    console.log(e.target.value)
-                    setStartDate(e.target.value)
-                }}
-            />
-        </div>
-        <p></p>
-        <h5 style={{textAlign: "center", paddingLeft:"20px", paddingRight: "20px", color:"rgb(239, 229, 189)"}}>You may add immunities below:</h5>
-        {immunities.map((field, i) => (
-        <div key={i} className="col-6" style={{ color:"rgb(239, 229, 189)", margin: "auto"}}>
-            <label>Immunity {i+1}:</label>
-            <input
-            className="form-control"
-            type="text"
-            placeholder="Enter First Name"
-            name="firstName"
-            value={field}
-            onChange={e => handleChangeInput(i, e)}
-            style={{marginLeft:"3px"}}
-            />
-            <button onClick={() => handleAdd(i)} className="btn btn-outline-success btn-sm" style={{marginLeft:"5px"}}>
-            Add
-            </button>
-            <button disabled={i === 1} onClick={() => handleSubtract(i)} className="btn btn-outline-danger btn-sm" style={{marginLeft:"5px"}}>
-            Del
-            </button>
-        </div>
-        ))}
-
-        <p></p>
-        <div style={{ margin:"auto", width: "fit-content"}}>
-            <button className="btn btn-primary" onClick={submitGame} style={{backgroundColor:"rgb(239, 229, 189)", color:"black"}}>Create Game</button>
+            <p></p>
+            <div style={{ margin:"auto", width: "fit-content"}}>
+                <button className="btn btn-primary" onClick={submitGame} style={{backgroundColor:"rgb(239, 229, 189)", color:"black"}}>Create Game</button>
+            </div>
         </div>
       </div>
   )

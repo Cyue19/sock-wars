@@ -56,6 +56,42 @@ export default function Register() {
   }
 
   return (
+    <div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand">Sock Wars</a>
+                    
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    
+                    
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/immunity">Immunities</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/target">Target</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/elimpage">Report Elimination</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">Leaderboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/rules">Rules</a>
+                        </li>
+                    </ul>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Register</a>
+                    </li>
+
+                    <li class="nav-item">
+                      <a class="nav-link" href="/login">Login</a>
+                    </li>
+                </div>
+            </nav>
     <div className="p-5">
       <form style={{color: "white", margin: "auto", backgroundColor: "#2A3B4B"}} className="col-8 px-4 py-3" onSubmit={(e) => createUser(e)}>
         <h1 style={{textAlign: "center"}}>Create Account</h1>
@@ -172,6 +208,7 @@ export default function Register() {
           <LoadButton className="btn btn-warning col-6" type="submit" btnLoading={btnLoading}>Join!</LoadButton>
         </div>
       </form>
+    </div>
     </div>
   );
 }
