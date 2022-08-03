@@ -214,8 +214,8 @@ export default function Gamehistory() {
 
                 <div className="col">
                   <h3 style={{fontSize: "18px"}}>Immunities</h3>
-                  <div className={styles.formCard} style={{backgroundColor: "white"}}>
-                    <div style={{height: "250px"}}>
+                  <div className={styles.formCard}>
+                    <div style={{height: "275px"}}>
                       {game.immunities.map((immunity) => (
                         <p style={{margin: "0px"}}>Day {i+1}: {immunity}</p>
                       ))}
