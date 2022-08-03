@@ -4,9 +4,10 @@ import { UserContext } from "../../hooks/UserContext";
 import axios from "axios";
 
 import Spinner from "../../components/Spinner";
-import styles from "../../../styles/profile.module.css";
 import EditModal from "../../components/EditModal.js";
 import NavBar from "../../components/NavBar";
+
+import styles from "../../../styles/Game.module.css";
 
 const URL_PREFIX = process.env.NEXT_PUBLIC_REACT_APP_URL;
 const endPoint = process.env.NEXT_PUBLIC_REACT_APP_URL + "/games/";
@@ -20,6 +21,7 @@ export default function Gamehistory() {
  
   // const [disableJoin, setDisableJoin] = useState(false); //will be used to disable the join button if the game has already started
   const [game, setGame] = useState();
+  const [userGame, setUserGame] = useState();
   const [hasJoined, setHasJoined] = useState(false);
   const [lockDate, setLockDate] = useState();
   const [error, setError] = useState();
@@ -37,6 +39,7 @@ export default function Gamehistory() {
           for (var i=0; i<user.gamesPlayed.length; i++) {
             if (user.gamesPlayed[i].gameId===_id) {
               setHasJoined(true);
+              setUserGame(user.gamesPlayed[i]);
               break;
             }
           }
@@ -91,169 +94,6 @@ export default function Gamehistory() {
         console.log(error.response);
       });
   };
-
-  const handleDateChange = (e, key) => {
-    //console.log(gamehistory)
-    setGameEdit((prevState) => ({
-      ...prevState,
-      [key]: e.target.value,
-    }));
-  }
-
-  const addImmunity = (value) => { 
-    setGameEdit((prevState) => ({
-      ...prevState,
-      immunities: [...prevState.immunities, value]
-    }));
-  }
-
-  const editImmunity = (e, i) => { //i to track which immunity to edit
-    const immunities = gameEdit.immunities.map((imm, idx) => {
-      if(idx === i)
-        return e.target.value
-      else 
-        return imm
-    })
-    setGameEdit((prevState) => ({
-      ...prevState,
-      immunities: immunities
-    }))
-  }
-
-  const removeImmunity = (i) => {
-    // console.log(i)
-    // setGameEdit(prevState => {
-    //   const copy = prevState
-    //   copy.immunities.splice(i, 1)
-    //   console.log(copy)
-    //   return copy
-    // })
-    const immunities = gameEdit.immunities.filter((imm, idx) => idx !== i)
-    console.log(immunities)
-    setGameEdit((prevState) => ({
-        ...prevState,
-        immunities: immunities
-    }))
-  }
-
-  const addActivePlayer = (value) => { 
-    const el = gameEdit.eliminatedPlayers.filter((plyr, idx) => plyr.userName === value) 
-    if(el.length === 0) { //if player doesnt exist in activePlayers
-      const newPlayer = {userName: value}
-      setGameEdit((prevState) => ({
-        ...prevState,
-        activePlayers: [...prevState.activePlayers, newPlayer]
-      }));
-    }
-  }
-
-  const editActivePlayer = (e, i) => { //i to track which player to edit
-    const ac = gameEdit.activePlayers.map((plyr, idx) => {
-      if(idx === i)
-        return {userName: e.target.value}
-      else 
-        return plyr
-    })
-    console.log(ac)
-    setGameEdit((prevState) => ({
-      ...prevState,
-      activePlayers: ac
-    }))
-  }
-
-  const removeActivePlayer = (i) => {
-    const ac = gameEdit.activePlayers.filter((plyr, idx) => idx !== i)
-    console.log(ac)
-    setGameEdit((prevState) => ({
-        ...prevState,
-        activePlayers: ac
-    }))
-  }
-
-  const addElimPlayer = (value) => {
-    const ac = gameEdit.activePlayers.filter((plyr, idx) => plyr.userName === value) 
-    if(ac.length === 0) { //if player doesnt exist in activePlayers
-      setGameEdit((prevState) => ({
-        ...prevState,
-        eliminatedPlayers: [...prevState.eliminatedPlayers, {userName: value}]
-      }));
-    }
-  }
-
-  const editElimPlayer = (e, i) => { //i to track which player to edit
-    const el = gameEdit.eliminatedPlayers.map((plyr, idx) => {
-      if(idx === i)
-        return {userName: e.target.value}
-      else 
-        return plyr
-    })
-    setGameEdit((prevState) => ({
-      ...prevState,
-      eliminatedPlayers: el
-    }))
-  }
-
-  const removeElimPlayer = (i) => {
-    const el = gameEdit.eliminatedPlayers.filter((plyr, idx) => idx !== i)
-    setGameEdit((prevState) => ({
-        ...prevState,
-        eliminatedPlayers: el
-    }))
-  }
-
-  const submitEdits = async () => {
-    let ap_urls = [] //urls for Active Players
-    for(const ap of gameEdit.activePlayers) {
-      const req = axios.get(URL_PREFIX + "/users/" + ap.userName);
-      ap_urls.push(req)
-    }
-    let ep_urls = [] //urls for Eliminated Players
-    for(const ep of gameEdit.eliminatedPlayers) {
-      const req = axios.get(URL_PREFIX + "/users/" + ep.userName);
-      ep_urls.push(req)
-    }
-    let actives = [];
-    await Promise.all(ap_urls)
-      .then((players) => {
-        for(const p of players) {
-          actives.push({
-            id: p.data._id,
-            userName: p.data.userName,
-            section: p.data.section
-          })
-        }
-      })
-      .catch((error) => {
-        console.log(error)
-      });
-    let elims = [];
-    await Promise.all(ep_urls)
-      .then((players) => {
-        for(const p of players) {
-          elims.push({
-            id: p.data._id,
-            userName: p.data.userName,
-            section: p.data.section
-          })
-        }
-      })
-      .catch((error) => {
-        console.log(error)
-      });
-    try {
-      const response = await axios.patch(URL_PREFIX + "/games/editgame", {
-        _id: _id,
-        activePlayers: actives,
-        eliminatedPlayers: elims,
-        startDate: gameEdit.startDate,
-        endDate: gameEdit.endDate,
-        immunities: gameEdit.immunities,
-      });
-      console.log(response.data);
-    } catch(err) {
-      console.log(err.response.data);
-    }
-  }
     
   async function unjoin() {
     try {
@@ -290,23 +130,129 @@ export default function Gamehistory() {
   return (
     <div>
       <NavBar page="game" />
-      {game && lockDate && user  ? (
-        <div className="container px-5 pt-3" style={{width: "50%" }}>
+      {game && lockDate && user  ? 
+        <div className="container px-5">
 
           {error ? 
-            <div class="alert alert-danger" role="alert">
+            <div className="alert alert-danger" role="alert">
               {error}
             </div>
             :
             <div></div>
           }
+
+          <div style={{textAlign: "center"}}>
+            {/* <h1 className="text-center mb-3 me-2" style={{color: "white", display: "inline-block", textAlign: "center"}}>Game Summary</h1> */}
+            <div className="row">
+                <div className="col-5 text-center" style={{ margin: "auto", color: "white"}}>
+                  <h1 style={{ marginBottom: "0"}}>{game.title}</h1>
+                  <span style={{fontSize: "14px"}}>
+                    <span style={{color: "#f8c40c"}}>Start:</span> {new Date(game.startDate).toLocaleString()} <span style={{color: "#f8c40c"}}>Status:</span> {game.status}
+                  </span>
+                </div>
+              </div>
+          </div>
+
+          <div className=" mt-0 mx-5">
+            <div className="row">
+              <div className="col">
+                <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                  <li className="nav-item" role="presentation">
+                    <button className="nav-link active" style={{borderRadius: "0"}} id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">General</button>
+                  </li>
+                  <li className="nav-item" role="presentation">
+                    <button class="nav-link" style={{borderRadius: "0"}} id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Eliminations</button>
+                  </li>
+                </ul>
+              </div>
+              <div className="col">
+                {user.role==="user" ?
+                  <>
+                    {hasJoined ?
+                    <button type="button" className="btn btn-danger btn-sm" onClick={unjoin} style={{float: "right", marginTop: "3px", marginBottom: "10px",}} disabled = {new Date() > lockDate}>
+                      Leave Game
+                    </button>
+                    :
+                    <button type="button" className="btn btn-primary btn-sm" onClick={joinGame} style={{float: "right", marginTop: "3px", marginBottom: "10px",}} disabled = {new Date() > lockDate}>
+                      Join Game
+                    </button>
+                    }
+                  </>
+                :
+                  <button type="button" className="btn btn-primary btn-sm text-center" onClick={matchPlayers} style={{float: "right", marginTop: "3px", marginBottom: "10px",}} disabled = {new Date() < lockDate || game.status!=="pending"}>
+                    Match Targets
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div className="tab-content mb-5 mx-5" id="pills-tabContent" style={{backgroundColor: "rgb(239, 229, 189)"}}>
+            <div className="tab-pane fade show active pb-4 px-4 pt-3" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabIndex="0">
+              <div className="row">
+                <div className="col-3">
+                  <h3 style={{fontSize: "18px"}}>Active Players</h3>
+                  <div className={styles.formCard}>
+                    <div className={styles.scroll}>
+                      {game.activePlayers.map((player) => (
+                        <p style={{margin: "0px"}}>{player.userName}</p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-3">
+                  <h3 style={{fontSize: "18px"}}>Eliminated Players</h3>
+                  <div className={styles.formCard}>
+                    <div className={styles.scroll}>
+                      {game.eliminatedPlayers.map((player, i) => (
+                        <p style={{margin: "0px"}}>{player.username}</p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col">
+                  <h3 style={{fontSize: "18px"}}>Immunities</h3>
+                  <div className={styles.formCard} style={{backgroundColor: "white"}}>
+                    <div style={{height: "250px"}}>
+                      {game.immunities.map((immunity) => (
+                        <p style={{margin: "0px"}}>Day {i+1}: {immunity}</p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div className="tab-pane fade p-4 px-5" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabIndex="0">
+              <div className={styles.formCard} style={{width: "fit-content", margin: "auto"}}>
+                <table className="table table-sm table-striped text-center">
+                  <tbody>
+                    {game.eliminatedPlayers.map((player) => (
+                      <tr>
+                        <td>
+                          <div>{player.username} was eliminated by {player.eliminator}</div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+
+
+
           
-          <div
-            className="card"
-            border="0"
-            width="300px"
-            style={{ backgroundColor: "rgb(239, 229, 189)"}}
-          >
+
+          {/* <div className="card" border="0" width="300px" style={{ backgroundColor: "rgb(239, 229, 189)"}}>
 
             <EditModal
               gameEdit={gameEdit}
@@ -321,6 +267,9 @@ export default function Gamehistory() {
               addElimPlayer={addElimPlayer}
               editElimPlayer={editElimPlayer}
               removeElimPlayer={removeElimPlayer}
+            />
+            <EditModal
+              gameEdit={gameEdit}
             />
             {user.role==="user" ?
               <>
@@ -339,7 +288,7 @@ export default function Gamehistory() {
                 Match Targets
               </button>
             }
-            <div className="upper"></div>
+
             <span className="text-muted d-block mb-2 text-center">
               <p>Game #: {game._id}</p>
             </span>
@@ -386,13 +335,12 @@ export default function Gamehistory() {
               style={{ backgroundColor: "rgb(119, 136, 153)" }}
             >
               <h6 className="mb-0">Immunities: </h6>
-              {/* <span>{gamehistory.immunities}</span> */}
             </div>
-          </div>
+          </div> */}
         </div>
-      ) : (
+      : 
         <Spinner/>
-      )}
+      }
     </div>
   )
 }

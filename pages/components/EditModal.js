@@ -17,6 +17,162 @@ export default function EditModal(props) {
         setElimPlayer(event.target.value)
     }
 
+    const handleDateChange = (e, key) => {
+        //console.log(gamehistory)
+        setGameEdit((prevState) => ({
+          ...prevState,
+          [key]: e.target.value,
+        }));
+      }
+    
+      const addImmunity = (value) => { 
+        setGameEdit((prevState) => ({
+          ...prevState,
+          immunities: [...prevState.immunities, value]
+        }));
+      }
+    
+      const editImmunity = (e, i) => { //i to track which immunity to edit
+        const immunities = gameEdit.immunities.map((imm, idx) => {
+          if(idx === i)
+            return e.target.value
+          else 
+            return imm
+        })
+        setGameEdit((prevState) => ({
+          ...prevState,
+          immunities: immunities
+        }))
+      }
+    
+      const removeImmunity = (i) => {
+        const immunities = gameEdit.immunities.filter((imm, idx) => idx !== i)
+        console.log(immunities)
+        setGameEdit((prevState) => ({
+            ...prevState,
+            immunities: immunities
+        }))
+      }
+    
+      const addActivePlayer = (value) => { 
+        const el = gameEdit.eliminatedPlayers.filter((plyr, idx) => plyr.userName === value) 
+        if(el.length === 0) { //if player doesnt exist in activePlayers
+          const newPlayer = {userName: value}
+          setGameEdit((prevState) => ({
+            ...prevState,
+            activePlayers: [...prevState.activePlayers, newPlayer]
+          }));
+        }
+      }
+    
+      const editActivePlayer = (e, i) => { //i to track which player to edit
+        const ac = gameEdit.activePlayers.map((plyr, idx) => {
+          if(idx === i)
+            return {userName: e.target.value}
+          else 
+            return plyr
+        })
+        console.log(ac)
+        setGameEdit((prevState) => ({
+          ...prevState,
+          activePlayers: ac
+        }))
+      }
+    
+      const removeActivePlayer = (i) => {
+        const ac = gameEdit.activePlayers.filter((plyr, idx) => idx !== i)
+        console.log(ac)
+        setGameEdit((prevState) => ({
+            ...prevState,
+            activePlayers: ac
+        }))
+      }
+    
+      const addElimPlayer = (value) => {
+        const ac = gameEdit.activePlayers.filter((plyr, idx) => plyr.userName === value) 
+        if(ac.length === 0) { //if player doesnt exist in activePlayers
+          setGameEdit((prevState) => ({
+            ...prevState,
+            eliminatedPlayers: [...prevState.eliminatedPlayers, {userName: value}]
+          }));
+        }
+      }
+    
+      const editElimPlayer = (e, i) => { //i to track which player to edit
+        const el = gameEdit.eliminatedPlayers.map((plyr, idx) => {
+          if(idx === i)
+            return {userName: e.target.value}
+          else 
+            return plyr
+        })
+        setGameEdit((prevState) => ({
+          ...prevState,
+          eliminatedPlayers: el
+        }))
+      }
+    
+      const removeElimPlayer = (i) => {
+        const el = gameEdit.eliminatedPlayers.filter((plyr, idx) => idx !== i)
+        setGameEdit((prevState) => ({
+            ...prevState,
+            eliminatedPlayers: el
+        }))
+      }
+    
+      const submitEdits = async () => {
+        let ap_urls = [] //urls for Active Players
+        for(const ap of gameEdit.activePlayers) {
+          const req = axios.get(URL_PREFIX + "/users/" + ap.userName);
+          ap_urls.push(req)
+        }
+        let ep_urls = [] //urls for Eliminated Players
+        for(const ep of gameEdit.eliminatedPlayers) {
+          const req = axios.get(URL_PREFIX + "/users/" + ep.userName);
+          ep_urls.push(req)
+        }
+        let actives = [];
+        await Promise.all(ap_urls)
+          .then((players) => {
+            for(const p of players) {
+              actives.push({
+                id: p.data._id,
+                userName: p.data.userName,
+                section: p.data.section
+              })
+            }
+          })
+          .catch((error) => {
+            console.log(error)
+          });
+        let elims = [];
+        await Promise.all(ep_urls)
+          .then((players) => {
+            for(const p of players) {
+              elims.push({
+                id: p.data._id,
+                userName: p.data.userName,
+                section: p.data.section
+              })
+            }
+          })
+          .catch((error) => {
+            console.log(error)
+          });
+        try {
+          const response = await axios.patch(URL_PREFIX + "/games/editgame", {
+            _id: _id,
+            activePlayers: actives,
+            eliminatedPlayers: elims,
+            startDate: gameEdit.startDate,
+            endDate: gameEdit.endDate,
+            immunities: gameEdit.immunities,
+          });
+          console.log(response.data);
+        } catch(err) {
+          console.log(err.response.data);
+        }
+      }
+
     return (
         <div>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -55,7 +211,7 @@ export default function EditModal(props) {
                                 <div>
                                     <button className="btn btn-primary btn-sm" style={{marginTop:"5px", float:"right"}} 
                                     onClick={() => {
-                                        props.addImmunity(immunity);
+                                        addImmunity(immunity);
                                         setImmunity("");
                                     }}>
                                         Add
@@ -68,10 +224,10 @@ export default function EditModal(props) {
                                         <input
                                             type="text"
                                             value={imm}
-                                            onChange={e => props.editImmunity(e, i)}
+                                            onChange={e => editImmunity(e, i)}
                                             style={{width:"70%"}}
                                         />
-                                        <button className="btn btn-outline-danger btn-sm" style={{marginLeft:"5px", float:"right"}} onClick={()=>{props.removeImmunity(i)}}>
+                                        <button className="btn btn-outline-danger btn-sm" style={{marginLeft:"5px", float:"right"}} onClick={()=>{removeImmunity(i)}}>
                                             Del
                                         </button> 
                                     </div>
@@ -83,7 +239,7 @@ export default function EditModal(props) {
                                     <input type="datetime-local" className="form-control" id="startDate" 
                                         //defaultValue="2022-06-09T05:09:00.00"
                                         defaultValue={props.gameEdit ? props.gameEdit.startDate : ""}
-                                        onChange={(e) => props.handleDateChange(e, 'startDate')}
+                                        onChange={(e) => handleDateChange(e, 'startDate')}
                                     />
                                 </div>
                                 <div className="col-7">
@@ -91,7 +247,7 @@ export default function EditModal(props) {
                                     <input type="datetime-local" className="form-control" id="endDate" 
                                         //value={props.data ? props.data.endDate : ""}
                                         defaultValue={props.gameEdit ? props.gameEdit.endDate : ""}
-                                        onChange={(e) => props.handleDateChange(e, 'endDate')}
+                                        onChange={(e) => handleDateChange(e, 'endDate')}
                                     />
                                 </div>
                             </div>
@@ -103,7 +259,7 @@ export default function EditModal(props) {
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" type="button"
                                         onClick={() => {
-                                            props.addActivePlayer(activePlayer);
+                                            addActivePlayer(activePlayer);
                                             setActivePlayer("");
                                         }}>
                                         Add</button>
@@ -115,10 +271,10 @@ export default function EditModal(props) {
                                         <input
                                             type="text"
                                             value={usr.userName}
-                                            onChange={e => props.editActivePlayer(e, i)}
+                                            onChange={e => editActivePlayer(e, i)}
                                             style={{width:"70%"}}
                                         />
-                                        <button className="btn btn-outline-danger btn-sm" style={{marginLeft:"5px", float:"right"}} onClick={()=>{props.removeActivePlayer(i)}}>
+                                        <button className="btn btn-outline-danger btn-sm" style={{marginLeft:"5px", float:"right"}} onClick={()=>{removeActivePlayer(i)}}>
                                             Del
                                         </button> 
                                     </div>
@@ -130,7 +286,7 @@ export default function EditModal(props) {
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" type="button"
                                         onClick={() => {
-                                            props.addElimPlayer(elimPlayer);
+                                            addElimPlayer(elimPlayer);
                                             setElimPlayer("");
                                         }}>
                                         Add</button>
@@ -142,10 +298,10 @@ export default function EditModal(props) {
                                         <input
                                             type="text"
                                             value={usr.userName}
-                                            onChange={e => props.editElimPlayer(e, i)}
+                                            onChange={e => editElimPlayer(e, i)}
                                             style={{width:"70%"}}
                                         />
-                                        <button className="btn btn-outline-danger btn-sm" style={{marginLeft:"5px", float:"right"}} onClick={()=>{props.removeElimPlayer(i)}}>
+                                        <button className="btn btn-outline-danger btn-sm" style={{marginLeft:"5px", float:"right"}} onClick={()=>{removeElimPlayer(i)}}>
                                             Del
                                         </button> 
                                     </div>
@@ -156,7 +312,7 @@ export default function EditModal(props) {
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onClick={props.submitEdits}>Save changes</button>
+                        <button type="button" class="btn btn-primary" onClick={submitEdits}>Save changes</button>
                     </div>
                     </div>
                 </div>
