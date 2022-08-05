@@ -39,20 +39,20 @@ export default function GeneralNotif(props) {
     async function confirmElimination() {
         try {
             // gameId, eliminatorUsername, eliminated, newTarget
-            var newTarget;
-            for (var i=0; i<user.gamesPlayed.length; i++) {
-                if (user.gamesPlayed[i].gameId===props.gameId) {
-                    const targetList = user.gamesPlayed[i].targets
-                    newTarget = targetList[targetList.length-1];
-                    break;
-                }
-            }
+            // var newTarget;
+            // for (var i=0; i<user.gamesPlayed.length; i++) {
+            //     if (user.gamesPlayed[i].gameId===props.gameId) {
+            //         const targetList = user.gamesPlayed[i].targets
+            //         newTarget = targetList[targetList.length-1];
+            //         break;
+            //     }
+            // }
 
             const params = {
                 gameId: props.gameId,
-                eliminatorUsername: props.header,
+                eliminator: props.sender,
                 eliminated: user,
-                newTarget: newTarget
+                // newTarget: newTarget
             }
 
             const response = await axios.patch(confirmEndPoint, params);

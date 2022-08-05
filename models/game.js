@@ -5,13 +5,21 @@ const gameSchema = new mongoose.Schema(
     title: String,
     status: String,
     activePlayers: [{ 
-      userName: String, 
-      section: String, 
-      eliminated: Number, 
-      friends: [{userName: {type: String}, firstName: {type: String}, lastName: {type: String}, section: {type: String}}] 
+      userName: {type: String},
+      firstName: {type: String},
+      lastName: {type: String}, 
+      section: {type: String}, 
+      eliminated: {type: Number}, 
+      friends: [{userName: {type: String}, firstName: {type: String}, lastName: {type: String}, section: {type: String}}],
+      score: {type: Number}
     }],
     eliminatedPlayers: [
-      { id: String, username: String, section: String, eliminator: String },
+      { id: String, 
+        userName: String, 
+        firstName: String, 
+        lastName: String, 
+        section: String, 
+        eliminator: {firstName: {type: String}, lastName: {type: String}, userName: {type: String}} },
     ],
     startDate: Date,
     immunities: [String],

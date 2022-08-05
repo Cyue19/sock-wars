@@ -17,7 +17,14 @@ export default async function handler(req, res){
             throw Error("Incorrect username or password");
         }
 
-        const token = jwt.sign({ id: user._id, permission: user.role }, process.env.JWT_SECRET_KEY);
+        const token = jwt.sign({
+                                id: user._id, 
+                                permission: user.role, 
+                                firstName: user.firstName, 
+                                lastName: user.lastName, 
+                                userName: user.userName 
+                            }, process.env.JWT_SECRET_KEY);
+                            
         if (!token) {
             throw Error("Couldn't sign token");
         }

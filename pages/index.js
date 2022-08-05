@@ -10,7 +10,6 @@ import NavBar from "./components/NavBar";
 const endPoint = process.env.NEXT_PUBLIC_REACT_APP_URL + "/games/";
 
 export default function Gamehistory() {
-  const [activePlyrs, setActivePlyrs] = useState();
   const [game, setGame] = useState();
   const { prevGame, currGame } = useContext(GameContext);
 
@@ -22,26 +21,7 @@ export default function Gamehistory() {
     } else if (prevGame) {
       setGame(prevGame);
     }
-
-    // try {
-    //   fetchGamehistory();
-    // } catch (err) {
-    //   console.log(err);
-    // }
   }, [prevGame, currGame]);
-
-  // async function fetchGamehistory() {
-  //   try {
-  //     const response = await axios.get(endPoint);
-  //     setActivePlyrs(response.data.activePlayers);
-  //     console.log(response.data.activePlayers);
-  //   } catch (err) {
-  //     console.log(err);
-  //     if (err.response) {
-  //       console.log(err.response);
-  //     }
-  //   }
-  // }
 
   return (
     <div>
@@ -69,16 +49,16 @@ export default function Gamehistory() {
                   </tr>
                 </thead>
                 <tbody>
-                  {game.activePlayers.map((activePlyr, index) => (
+                  {game.activePlayers.map((player, index) => (
                     <tr>
                       <td>
                         <div>{index + 1}</div>
                       </td>
                       <td>
-                        <div>{activePlyr.userName}</div>
+                        <div>{player.userName}</div>
                       </td>
                       <td>
-                        <div>{activePlyr.eliminated}</div>
+                        <div>{player.score}</div>
                       </td>
                     </tr>
                   ))}
@@ -107,13 +87,13 @@ export default function Gamehistory() {
                   {game.eliminatedPlayers.map((eliminatedPlyr) => (
                     <tr>
                       <td>
-                        <div>{eliminatedPlyr.username}</div>
+                        <div>{eliminatedPlyr.userName}</div>
                       </td>
                       <td>
                         <div>{eliminatedPlyr.section}</div>
                       </td>
                       <td>
-                        <div>{eliminatedPlyr.eliminator}</div>
+                        <div>{eliminatedPlyr.eliminator.userName}</div>
                       </td>
                     </tr>
                   ))}

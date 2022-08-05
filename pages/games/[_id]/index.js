@@ -216,7 +216,7 @@ export default function Gamehistory() {
                   <h3 style={{fontSize: "18px"}}>Immunities</h3>
                   <div className={styles.formCard}>
                     <div style={{height: "275px"}}>
-                      {game.immunities.map((immunity) => (
+                      {game.immunities.map((immunity, i) => (
                         <p style={{margin: "0px"}}>Day {i+1}: {immunity}</p>
                       ))}
                     </div>

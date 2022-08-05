@@ -18,6 +18,11 @@ const userSchema = new mongoose.Schema({
     },
     notifications: [{
         header: {type: String},
+        sender: {
+            userName: {type: String},
+            firstName: {type: String},
+            lastName: {type: String}
+        },
         message: {type: String},
         type: {type: String}, 
         timeStamp: {type: Date},

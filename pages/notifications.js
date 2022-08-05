@@ -61,7 +61,7 @@ export default function Notifications() {
                   <div className="mb-2">
                       <ul className="list-group list-group-flush">
                           {notifs.map((notif) => (
-                              <Notification key={notif._id} type={notif.type} header={notif.header} message={notif.message} time={notif.timeStamp} gameId={notif.gameId} id={notif._id} />
+                              <Notification key={notif._id} type={notif.type} header={notif.header} message={notif.message} time={notif.timeStamp} gameId={notif.gameId} id={notif._id} sender={notif.sender} />
                           ))}
 
                           {notifs.length===0 ?

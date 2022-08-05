@@ -26,10 +26,12 @@ export default async function handler(req, res) {
       await Game.updateOne(
         { _id: _id },
         { $push: {"activePlayers": {
-            id: user._id,
             userName: user.userName,
+            firstName: user.firstName,
+            lastName: user.lastName,
             section: user.section,
-            friends: user.friends
+            friends: user.friends,
+            score: 0,
         }}}
       );
       res.status(201).json("Successfully opted into game");

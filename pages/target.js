@@ -54,7 +54,7 @@ export default function Target() {
             if (eliminated) {
                 const response = await axios.patch(endPoint, {
                     target: target.userName,
-                    userName: user.userName,
+                    sender: user,
                     gameId: currGame._id
                 });
                 console.log(response);

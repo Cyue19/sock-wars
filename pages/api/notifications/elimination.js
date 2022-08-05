@@ -1,14 +1,20 @@
 import dbConnect from '../../../lib/dbConnect'
+import user from '../../../models/user';
 const User = require("../../../models/user");
 
 export default async function handler(req, res){
-    const { userName, target, gameId } = req.body;
+    const { sender, target, gameId } = req.body;
 
     try {
         await dbConnect();
 
         const obj = {
-            header: userName,
+            header: sender.userName,
+            sender: {
+                userName: sender.userName,
+                firstName: sender.firstName,
+                lastName: sender.lastName
+            },
             message: "has eliminated you",
             type: "elimination",
             timeStamp: new Date(),

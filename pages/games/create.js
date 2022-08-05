@@ -83,21 +83,31 @@ function Create() {
   return (
       <div>
         <NavBar page="create"/>
+        
         {success ?
-            <div className="alert alert-success mt-3 mb-2 mx-5" style={{margin: "auto"}} role="alert">
-                Game was successfully created!
+            <div className="row">
+                <div className="col-3 m-auto">
+                    <div className="alert alert-success mt-3 mb-2" role="alert">
+                        Game was successfully created!
+                    </div>
+                </div>
             </div>
         :
             <div></div>
         }   
 
         {error ?
-            <div className="alert alert-danger mt-3 mb-2 mx-5" style={{margin: "auto"}} role="alert">
-                An error occurred
+            <div className="row">
+                <div className="col-3 m-auto">
+                    <div className="alert alert-danger mt-3 mb-2" role="alert">
+                        An error occurred
+                    </div>
+                </div>
             </div>
         :
             <div></div>
         } 
+
         <div style={{width: "50%", margin: "auto"}}>
             <h1 style={{textAlign: "center", paddingLeft:"20px", paddingRight: "20px", color:"rgb(239, 229, 189)"}}>Create a new game:</h1>
 
